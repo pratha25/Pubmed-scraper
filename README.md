@@ -87,3 +87,5 @@ MIT License
 
 Pratha Khare  
 Feel free to fork, star, and raise issues!
+### ✅ Maintained by Pratha Khare
+
