@@ -89,3 +89,4 @@ Pratha Khare
 Feel free to fork, star, and raise issues!
 ### ✅ Maintained by Pratha Khare
 
+> Version: 1.0.0
