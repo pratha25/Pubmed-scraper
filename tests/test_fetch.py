@@ -1,6 +1,6 @@
 # Importing required functions from the fetch module
 from pubmed_scraper.fetch import search_pubmed, fetch_details, parse_papers
-from pubmed_scraper.utils import save_to_csv
+from pubmed_scraper.utils import write_to_csv
 
 # Define the search query and how many papers you want to fetch
 query = "covid"  # This is the keyword we want to search in PubMed
@@ -22,7 +22,7 @@ parsed_data = parse_papers(papers)
 # Step 4: Save the parsed data into a CSV file
 output_file = "output.csv"
 print(f"\nWriting to {output_file}...")
-save_to_csv(parsed_data, output_file)
+write_to_csv(parsed_data, output_file)
 
 # Final confirmation
 print("✅ Done. Check output.csv")
