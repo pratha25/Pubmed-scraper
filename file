@@ -1,0 +1,251 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ParaBankAutomationFramework</groupId>
+  <artifactId>ParaBankAutomationFramework</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+
+    <!-- Selenium -->
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.35.0</version>
+    </dependency>
+
+    <!-- TestNG -->
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.11.0</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- WebDriverManager -->
+    <dependency>
+        <groupId>io.github.bonigarcia</groupId>
+        <artifactId>webdrivermanager</artifactId>
+        <version>6.1.0</version>
+    </dependency>
+
+    <!-- Apache POI -->
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>5.4.1</version>
+    </dependency>
+    <dependency>
+    <groupId>com.aventstack</groupId>
+    <artifactId>extentreports</artifactId>
+    <version>5.1.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.24.3</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.24.3</version>
+</dependency>
+
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>2.0.17</version>
+    
+    
+</dependency>
+<dependency>
+    <groupId>com.aventstack</groupId>
+    <artifactId>extentreports</artifactId>
+    <version>5.1.2</version>
+</dependency>
+</dependencies>
+</project>
+
+--testng 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="ParaBank Suite">
+
+    <test name="ParaBank Tests">
+
+        <classes>
+
+            <class name="testcases.RegistrationTest"/>
+            <class name="testcases.LoginTest"/>
+            <class name="testcases.OpenAccountTest"/>
+            <class name="testcases.TransferFundsTest"/>
+            <class name="testcases.BillPayTest"/>
+
+        </classes>
+        
+
+    </test>
+    <listeners>
+
+    <listener
+     class-name="listeners.TestListener"/>
+
+</listeners>
+
+</suite>
+--jenkins 
+pipeline {
+agent any
+
+
+tools {
+    maven 'Maven3'
+    jdk 'jdk21'
+}
+
+stages {
+
+    stage('Checkout') {
+        steps {
+            git branch: 'New_Branch_1',
+                url: 'https://github.com/surajforu/Selenium_Automation_project.git'
+        }
+    }
+
+    stage('Build') {
+        steps {
+            dir('TutorialsNinjaFramework') {
+                bat 'mvn clean'
+            }
+        }
+    }
+
+    stage('Compile') {
+        steps {
+            dir('TutorialsNinjaFramework') {
+                bat 'mvn compile'
+            }
+        }
+    }
+
+    stage('Test') {
+        steps {
+            dir('TutorialsNinjaFramework') {
+                bat 'mvn test'
+            }
+        }
+    }
+
+    stage('Package') {
+        steps {
+            dir('TutorialsNinjaFramework') {
+                bat 'mvn package'
+            }
+        }
+    }
+
+    stage('Docker Build') {
+        steps {
+            dir('TutorialsNinjaFramework') {
+                bat 'docker build -t cucumber-framework .'
+            }
+        }
+    }
+
+    stage('Docker Run') {
+        steps {
+            bat 'docker run --rm cucumber-framework'
+        }
+    }
+}
+
+post {
+    always {
+        junit 'TutorialsNinjaFramework/target/surefire-reports/*.xml'
+    }
+
+    success {
+        echo 'Build Successful'
+    }
+
+    failure {
+        echo 'Build Failed'
+    }
+}
+
+
+}
+--docker
+FROM maven:3.9.15-eclipse-temurin-21
+ 
+WORKDIR /app
+ 
+COPY . .
+ 
+RUN mvn clean install -DskipTests
+ 
+CMD ["mvn","-Dtest=TestRunner","test"]
+
+--mam jenkins 
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven 3'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/pratha25/TutorialsNinjaCucumber.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'mvn clean'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                bat 'mvn compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+stage('Package') {
+    steps {
+        bat 'mvn package'
+    }
+}
+
+stage('Docker Build') {
+    steps {
+        bat 'docker build -t cucumber-framework .'
+    }
+}
+
+stage('Docker Run') {
+    steps {
+        bat 'docker run --rm cucumber-framework'
+    }
+}
+
+    post {
+        success {
+            echo 'Build Successful'
+        }
+
+        failure {
+            echo 'Build Failed'
+        }
+    }
+}
+
+
